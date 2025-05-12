@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemical Biodegradability Predictor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-center mb-2 text-gray-800">Chemical Biodegradability Predictor</h1>
+        <p class="text-center text-gray-600 mb-8">by Shaurya Pathak</p>
+        
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-xl font-semibold mb-4 text-gray-800">About This Demo</h2>
+            <p class="text-gray-600 mb-2">
+                Explore my QSAR model designed to predict the biodegradability of chemicals using the <a href="https://archive.ics.uci.edu/dataset/254/qsar+biodegradation" target="_blank" class="text-blue-600 hover:text-blue-800 hover:underline">UCI QSAR Biodegradation Dataset</a>. 
+                While prior studies on this dataset have utilized relatively complex methods like K-Nearest Neighbors, Partial Least Squares Discriminant Analysis, and Support Vector Machines, this model achieves over 85% accuracy using a single-layer perceptron architecture.
+            </p>
+            <p class="text-gray-600 mb-4">
+                For a detailed walkthrough of my methodology and code, visit the project's GitHub page.            
+            </p>
+            <h2 class="text-xl font-semibold mb-4 text-gray-800">Try It Yourself</h2>
+            <p class="text-gray-600">
+                Select a random sample from the 20% test data (unseen by the model) and click "Predict" to see the model's output. The true label (1 for biodegradable, 0 for non-biodegradable) is displayed for comparison. All code is transparent on GitHub to ensure trust and reproducibility.
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Left Panel: Sample Data Table -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold mb-4">Available Samples</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sample</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Label</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for sample in sample_files %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    Sample {{ sample.index }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {% set label_df = pd.read_csv(sample.label) %}
+                                    {{ label_df['label'].values[0] }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    <button onclick="predictSample('{{ sample.index }}')" 
+                                            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded transition duration-300">
+                                        Predict
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Right Panel: Prediction Display -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold mb-4">Prediction Results</h2>
+                <div id="predictionResult" class="hidden">
+                    <div class="mb-4">
+                        <h3 class="text-lg font-medium text-gray-700">Selected Sample: <span id="selectedSample" class="font-bold"></span></h3>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="p-4 rounded-lg" id="predictionBox">
+                            <h4 class="font-medium mb-2">Model Prediction</h4>
+                            <p id="predictionValue" class="text-2xl font-bold"></p>
+                        </div>
+                        <div class="p-4 rounded-lg" id="actualBox">
+                            <h4 class="font-medium mb-2">Actual Label</h4>
+                            <p id="actualValue" class="text-2xl font-bold"></p>
+                        </div>
+                    </div>
+                    <div class="p-4 rounded-lg" id="resultBox">
+                        <h4 class="font-medium mb-2">Result</h4>
+                        <p id="resultText" class="text-lg"></p>
+                    </div>
+                </div>
+                <div id="noSelection" class="text-center text-gray-500">
+                    Select a sample from the table to see predictions
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex justify-center space-x-6">
+            <a href="https://github.com/ess-pee" target="_blank" class="text-gray-600 hover:text-gray-900 transition-colors">
+                <i class="fab fa-github text-3xl"></i>
+            </a>
+            <a href="https://linkedin.com/in/shauryapathak" target="_blank" class="text-gray-600 hover:text-gray-900 transition-colors">
+                <i class="fab fa-linkedin text-3xl"></i>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        async function predictSample(index) {
+            try {
+                const response = await fetch(`/predict/${index}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Show prediction result
+                    document.getElementById('predictionResult').classList.remove('hidden');
+                    document.getElementById('noSelection').classList.add('hidden');
+                    
+                    // Update UI
+                    document.getElementById('selectedSample').textContent = `Sample ${index}`;
+                    
+                    const prediction = data.prediction === 1 ? 'Biodegradable' : 'Not Biodegradable';
+                    const actual = data.actual === 1 ? 'Biodegradable' : 'Not Biodegradable';
+                    
+                    document.getElementById('predictionValue').textContent = prediction;
+                    document.getElementById('actualValue').textContent = actual;
+                    
+                    // Set colors based on match
+                    const predictionBox = document.getElementById('predictionBox');
+                    const actualBox = document.getElementById('actualBox');
+                    const resultBox = document.getElementById('resultBox');
+                    
+                    if (data.prediction === data.actual) {
+                        predictionBox.className = 'p-4 rounded-lg bg-green-100';
+                        actualBox.className = 'p-4 rounded-lg bg-green-100';
+                        resultBox.className = 'p-4 rounded-lg bg-green-100';
+                        document.getElementById('resultText').textContent = 'Model Predicted Correctly!';
+                    } else {
+                        predictionBox.className = 'p-4 rounded-lg bg-red-100';
+                        actualBox.className = 'p-4 rounded-lg bg-red-100';
+                        resultBox.className = 'p-4 rounded-lg bg-red-100';
+                        document.getElementById('resultText').textContent = 'Model Predicted Incorrectly!';
+                    }
+                } else {
+                    alert('Error making prediction: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while making the prediction');
+            }
+        }
+    </script>
+</body>
+</html> 
