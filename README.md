@@ -1,4 +1,4 @@
-# QSAR Modelling using Machine Learning
+# QSAR Analysis using Machine Learning
 
 This repository contains a QSAR (Quantitative Structure-Activity Relationship) modelling project that uses a Single Layer Perceptron (SLP) neural network to predict the biodegradability of chemical compounds based on their structural features.
 
