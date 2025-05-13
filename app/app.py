@@ -7,12 +7,12 @@ import pandas as pd
 app = Flask(__name__)
 
 def predict(i, weights, biases):
-    # Ensure inputs are numpy arrays and have correct shapes
+    # ensuring correct input types
     i = np.array(i, dtype=np.float64)
     weights = np.array(weights, dtype=np.float64)
     biases = np.array(biases, dtype=np.float64)
     
-    # Reshape if necessary
+    # reshaping if its necessary, just good coding practice
     if len(i.shape) == 1:
         i = i.reshape(1, -1)
     if len(weights.shape) == 1:
@@ -24,7 +24,7 @@ def predict(i, weights, biases):
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
-# Load model parameters
+# loading the model
 params = np.load('model_params/model.npz')
 wts = params['wts']
 b = params['b']
@@ -52,14 +52,13 @@ def home():
 @app.route('/predict/<int:index>')
 def make_prediction(index):
     try:
-        # Load features and label
+
         features_df = pd.read_csv(f'sample_data/features_{index}.csv')
         label_df = pd.read_csv(f'sample_data/label_{index}.csv')
         
         features = features_df.values[0]
         actual_label = label_df['label'].values[0]
         
-        # Make prediction
         prediction = int(np.round(predict(features, wts, b)))
         
         return jsonify({
