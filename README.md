@@ -92,7 +92,7 @@ The model's performance was evaluated using k-fold cross-validation to ensure ro
 Plot 5: Depicting a confusion matrix, demonstrating high accuracy despite a lightweight architecture
 </div>
 
-During validation, the model achieved an average accuracy of approximately 85% across multiple iterations, outperforming traditional methods such as Random Forests and SVMs. Compared to Decision Trees and SVMs, this model demonstrates remarkable predictive capability, highlighting the importance of effective data processing in enhancing performance [1][2].
+During validation, the model achieved an average accuracy of approximately 85% across multiple iterations, outperforming traditional methods such as Random Forests and SVMs. Compared to Decision Trees, SVMs, Partial Least Squares Descriminant Analysis, and Graph Convolutional Networks, this model demonstrates remarkable predictive capability, highlighting the importance of effective data processing in enhancing performance [1][2][3][4].
 
 However, its accuracy remains below that of advanced architectures like Deep Neural Networks (DNNs) and Graph Neural Networks (GNNs). These modern architectures can perform end-to-end classification from raw SMILES, eliminating the need for handcrafted descriptors. Despite their strengths, DNNs and GNNs face challenges in regulatory contexts. Their black-box nature complicates explainability, a critical requirement for regulatory authorities. Additionally, Quantitative Structure-Activity Relationship (QSAR) datasets are often sparse, and DNNs typically require large datasets to achieve optimal performance, which are frequently unavailable in this domain.
 
@@ -142,3 +142,7 @@ Feel free to play around modifying parameters for learning or implement a search
 1. A. M. Elsayad, A. M. Nassef, M. Al-Dhaifallah, and K. A. Elsayad, “Classification of biodegradable substances using balanced random trees and boosted C5.0 decision trees,” Int. J. Environ. Res. Public Health, vol. 17, no. 24, p. 9322, Dec. 2020, doi: 10.3390/ijerph17249322.
 
 2. N. F. N. Aziz, A. R. Abd Rahman, F. H. Noor, and M. R. Othman, “Enhancing QSAR model accuracy for biodegradability prediction using chaotic adaptive binary manta ray foraging optimization,” J. Phys.: Conf. Ser., vol. 2998, no. 1, p. 012024, 2025, doi: 10.1088/1742-6596/2998/1/012024.
+
+3. D. A. Sheen and R. W. F. C. Rocha, "Classification of biodegradable materials using QSAR modelling with uncertainty estimation," SAR and QSAR in Environmental Research, vol. 27, no. 10, pp. 799–811, Oct. 2016, doi: 10.1080/1062936X.2016.1238010.
+
+4. M. Lee and K. Min, "A Comparative Study of the Performance for Predicting Biodegradability Classification: The Quantitative Structure-Activity Relationship Model vs the Graph Convolutional Network," ACS Omega, vol. 7, no. 4, pp. 3649–3655, Jan. 2022, doi: 10.1021/acsomega.1c06274.
